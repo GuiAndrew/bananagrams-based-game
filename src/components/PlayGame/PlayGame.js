@@ -16,7 +16,6 @@ class PlayGame extends Component {
             titles: [],
             isStart: false,
             isGameOver: false
-
         }
     }
     
@@ -76,7 +75,7 @@ class PlayGame extends Component {
         let titlesFromApi = this.state.titles.map(value => value.title);
         let titlesFromApiToUpperCase = titlesFromApi.toString().toUpperCase();
         let titlesFromApiArr = titlesFromApiToUpperCase.split(',');
-        console.log(titlesFromApiArr);
+        // console.log(titlesFromApiArr);
         let titlesFromJson = AnimeTitles.animeTitles.map(value => value);
         let titlesFromJsonToUpper = titlesFromJson.toString().toUpperCase();
         let titlesFromJsonToArr = titlesFromJsonToUpper.split(',');
@@ -84,6 +83,7 @@ class PlayGame extends Component {
        // console.log(titlesFromJsonToArr);        
         let arr = [];
         let pointsToCount = 0;
+        let points = 0;
 
         // console.log(titles);
 
@@ -103,8 +103,10 @@ class PlayGame extends Component {
                     
                     pointsToCount = this.checkContainWord(arr[i], titlesFromJsonToArr);
                     pointsToCount += this.checkContainWord(arr[i], titlesFromApiArr);
-                    console.log(pointsToCount);
-                    
+                    // console.log(pointsToCount);
+
+                    points = this.resultPoints(pointsToCount);
+                    // console.log(points);
                 }
                 else {
                     this.handleGameOver();
@@ -112,7 +114,7 @@ class PlayGame extends Component {
             }
         }
 
-        document.querySelector('#div').innerHTML = arr.toString();
+        // document.querySelector('#div').innerHTML = arr.toString();
         // document.querySelector('#div').innerHTML = lettersToCheck;
     }
 
@@ -141,7 +143,7 @@ class PlayGame extends Component {
         })
     }
 
-    checkContainWord = (arr, toCompere) => {
+    checkContainWord = (arr, toCompere) => { // Will compere the titles written by the user with the titles in the api/json
         // console.log(arr.length);
         // console.log(toCompere.length);
         let count = 0
@@ -156,6 +158,42 @@ class PlayGame extends Component {
         }
         // console.log(count);
         return count;
+    }
+
+    resultPoints = (pointsToCount) => {
+        let result = 0;
+        switch(pointsToCount) {
+            case 1:
+            case 2:
+                result = 20;
+                break;
+
+            case 3:
+            case 4:
+                result += 40;
+                break;
+
+            case 5:
+            case 6:
+                result += 60;
+                break;
+
+            case 7:
+            case 8:
+                result += 80;
+                break;
+
+            case 9:
+            case 10:
+                result += 100;
+                break;
+
+            default:
+                result = 0;
+                break;
+        }
+
+        return result;
     }
 
     render() {
