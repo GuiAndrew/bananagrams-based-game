@@ -4,16 +4,7 @@ import 'materialize-css/dist/css/materialize.min.css';
 import ApiService from '../../Util/ApiService';
 import PopUp from '../../Util/PopUp';
 import Letters from '../../data/letters.json';
-
-const renderLettersFromJson = () => {
-    return Letters.letters.map((letters, index) => {
-        return (
-            <span className="card-panel teal lighten-2 letter_tile" key={index}>
-                {letters}
-            </span>
-        );
-    });
-}
+import AnimeTitles from '../../data/animeTitle.json';
 
 class PlayGame extends Component {
     randomLetters = [];
@@ -23,7 +14,6 @@ class PlayGame extends Component {
 
         this.state = {
             titles: [],
-            letters: renderLettersFromJson(),
             isStart: false,
             isGameOver: false
 
@@ -83,7 +73,19 @@ class PlayGame extends Component {
     getWordsFromInput = () => {        
         let lettersToCheck = this.randomLetters.toString().replace(/,/g, ''); // Convert the array to a string and replace all commas with no space.
         let inputValues = document.querySelector('#animeTitles').value.toUpperCase();
+        let titlesFromApi = this.state.titles.map(value => value.title);
+        let titlesFromApiToUpperCase = titlesFromApi.toString().toUpperCase();
+        let titlesFromApiArr = titlesFromApiToUpperCase.split(',');
+        console.log(titlesFromApiArr);
+        let titlesFromJson = AnimeTitles.animeTitles.map(value => value);
+        let titlesFromJsonToUpper = titlesFromJson.toString().toUpperCase();
+        let titlesFromJsonToArr = titlesFromJsonToUpper.split(',');
+
+       // console.log(titlesFromJsonToArr);        
         let arr = [];
+        let pointsToCount = 0;
+
+        // console.log(titles);
 
         arr.push(inputValues.split(',')); // Will put the values in the input in to the array arr. 
 
@@ -96,12 +98,16 @@ class PlayGame extends Component {
 
         for (let i = 0; i < arr.length; i++) {            
             if (!arr[i].toString().match(/\d/)) { // Check if the string have a number.                
-                if (this.checkContain(arr[i].toString(), lettersToCheck)) {
-                    console.log("Cheek");
-
+                if (this.checkContainLetter(arr[i].toString(), lettersToCheck)) {
+                    //console.log("Cheek");
                     
-
-
+                    pointsToCount = this.checkContainWord(arr[i], titlesFromJsonToArr);
+                    pointsToCount += this.checkContainWord(arr[i], titlesFromApiArr);
+                    console.log(pointsToCount);
+                    
+                }
+                else {
+                    this.handleGameOver();
                 }
             }
         }
@@ -118,7 +124,7 @@ class PlayGame extends Component {
         this.setState({ isGameOver: !this.state.isGameOver });
     }
 
-    checkContain = (str, lettersToCheck) => {
+    checkContainLetter = (str, lettersToCheck) => {
         let temp = str.replace(/,/g, '').replace(/\s/g,''); // replace all commas with no space, and the second replace, if exist any space in the string, will remove.
         let letters = [...lettersToCheck];
         // console.log(temp);
@@ -133,6 +139,23 @@ class PlayGame extends Component {
             }
             return false;
         })
+    }
+
+    checkContainWord = (arr, toCompere) => {
+        // console.log(arr.length);
+        // console.log(toCompere.length);
+        let count = 0
+        for(let i = 0; i < arr.length; i++){
+            for(let j = 0; j < toCompere.length; j++){
+                if(arr[i].indexOf(toCompere[j]) > -1) {
+                    // console.log("is a matched");
+                    count++;
+                    break;
+                }
+            }            
+        }
+        // console.log(count);
+        return count;
     }
 
     render() {
@@ -153,9 +176,9 @@ class PlayGame extends Component {
                         { isStart && this.randomLetterToPlay() }
                     </div>
                     <hr />
-                    {/* {
+                    {
                         isStart && this.renderEnglishTitle()
-                    } */}                    
+                    }                    
                     <hr />
                     
                     {
