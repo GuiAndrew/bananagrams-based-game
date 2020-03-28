@@ -87,7 +87,13 @@ class PlayGame extends Component {
         this.setState({ isDivShow: !this.state.isDivShow });
         this.setState({ points: 0 });
         this.setState({ isWrongLetters: false });
+        this.randomLetters = [];
 
+        let letters = Letters.letters.map(letter => letter);
+        
+        while(this.randomLetters.length < 21) {
+            this.randomLetters.push(letters[Math.floor(Math.random() * letters.length)]);
+        }
 
         // Create intervel
         this.interval = setInterval(() => {
