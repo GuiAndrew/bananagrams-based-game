@@ -1,11 +1,6 @@
 const ApiService = {
-    TitlesList: () => {
-        return fetch('http://localhost:8000/api/titles')
-                .then(res => ApiService.ErrorHandler(res))
-                .then(res => res.json());
-    },
     EnglishTitles: () => {
-        return fetch('http://localhost:8000/api/titles/english')
+        return fetch('https://ghibliapi.herokuapp.com/films/')
                 .then(res => ApiService.ErrorHandler(res))
                 .then(res => res.json());
     },

@@ -4,7 +4,7 @@ import LinkWrapper from '../../Util/LinkWrapper';
 const Header = () => {
   return (
     <nav>
-      <div className="nav-wrapper blue lighten-2">
+      <div className="nav-wrapper teal lighten-2">
         <LinkWrapper to="/" className="brand-logo">
           Bananagrama: Anime/Manga Version
         </LinkWrapper>
