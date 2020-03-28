@@ -14,10 +14,15 @@ class PlayGame extends Component {
 
         this.state = {
             titles: [],
+            points: 0,
             isStart: false,
             isGameOver: false,
             isButtonStart: false,
-            isButtonDone: true
+            isButtonDone: true,
+            isInputValid: false,
+            isShowPoints: false,
+            isDivShow: true,
+            isWrongLetters: false
         }
     }
     
@@ -61,7 +66,7 @@ class PlayGame extends Component {
         return (
             // <input className="" type="text" name="name" />
             <div className="input-field col s6">
-                <input id="animeTitles" type="text" className="validate" />
+                <input id="animeTitles" type="text" className="validate" disabled={this.state.isInputValid} />
                 <label htmlFor="animeTitles">Titles</label>
             </div>
         );
@@ -72,11 +77,17 @@ class PlayGame extends Component {
 
         // Will set the timeout
         const oneMinHalf = 1000 * 89;
+        // const oneMinHalf = 1000 * 10; // Testing only
         this.timeout = new Date() * 1 + oneMinHalf;
 
-        this.setState({ isStart: !this.state.isStart });
+        this.setState({ isStart: true });
         this.setState({ isButtonStart: !this.state.isButtonStart });
         this.setState({ isButtonDone: !this.state.isButtonDone });
+        this.setState({ isInputValid: false });
+        this.setState({ isDivShow: !this.state.isDivShow });
+        this.setState({ points: 0 });
+        this.setState({ isWrongLetters: false });
+
 
         // Create intervel
         this.interval = setInterval(() => {
@@ -88,14 +99,13 @@ class PlayGame extends Component {
 
                 // Clear the time
                 clearInterval(this.interval);
-                this.setState({ isStart: !this.state.isStart });
-                this.setState({ isButtonStart: !this.state.isButtonStart });
-                this.setState({ isButtonDone: !this.state.isButtonDone });
+                this.setState({ isInputValid: true });
+                this.setState({ isShowPoints: true });
             }
         }, 1000);
     }
 
-    getWordsFromInput = () => {        
+    getWordsFromInput = () => { 
         let lettersToCheck = this.randomLetters.toString().replace(/,/g, ''); // Convert the array to a string and replace all commas with no space.
         let inputValues = document.querySelector('#animeTitles').value.toUpperCase();
         let titlesFromApi = this.state.titles.map(value => value.title);
@@ -109,7 +119,7 @@ class PlayGame extends Component {
        // console.log(titlesFromJsonToArr);        
         let arr = [];
         let pointsToCount = 0;
-        let points = 0;
+        // let points = 0;
 
         arr.push(inputValues.split(',')); // Will put the values in the input in to the array arr. 
 
@@ -122,22 +132,37 @@ class PlayGame extends Component {
 
         for (let i = 0; i < arr.length; i++) {            
             if (!arr[i].toString().match(/\d/)) { // Check if the string have a number.                
-                if (this.checkContainLetter(arr[i].toString(), lettersToCheck)) {
+                if (this.checkContainLetter(arr[i].toString(), lettersToCheck)) { // Check if letters in input are the some in the tiles.
                     //console.log("Cheek");
                     
                     pointsToCount = this.checkContainWord(arr[i], titlesFromJsonToArr);
                     pointsToCount += this.checkContainWord(arr[i], titlesFromApiArr);
                     // console.log(pointsToCount);
 
-                    points = this.resultPoints(pointsToCount);
+                    this.setState({ points: this.resultPoints(pointsToCount)});
                     // console.log(points);
                 }
                 else {
                     this.handleGameOver();
+                    clearInterval(this.interval);
+                    this.setState({ isStart: !this.state.isStart });
+                    this.setState({ isButtonStart: !this.state.isButtonStart });
+                    this.setState({ isButtonDone: !this.state.isButtonDone });
+                    this.setState({ isDivShow: !this.state.isDivShow });
+                    this.setState({ isShowPoints: true });
+                    this.setState({ points: 0});
+                    this.setState({ isWrongLetters: true });
+                    return;
                 }
             }
         }
-
+        clearInterval(this.interval);
+        this.handleGameOver();
+        this.setState({ isStart: !this.state.isStart });
+        this.setState({ isButtonStart: !this.state.isButtonStart });
+        this.setState({ isButtonDone: !this.state.isButtonDone });
+        this.setState({ isDivShow: !this.state.isDivShow });
+        this.setState({ isShowPoints: true });
         // document.querySelector('#div').innerHTML = arr.toString();
         // document.querySelector('#div').innerHTML = lettersToCheck;
     }
@@ -220,9 +245,25 @@ class PlayGame extends Component {
         return result;
     }
 
+    ShowDivImg = () => {
+        return (
+            <div className="container mb-10">
+                <img className="image" src="https://prodimage.images-bn.com/pimages/9781932188127_p0_v2_s1200x630.jpg" alt="" />
+            </div>
+        );
+    }
+
+    ShowSpanWrongLetters = () => {
+        return (
+            <span>
+                <h5>Wrong Letters</h5>
+            </span>
+        );
+    }
+
     render() {
         // console.log(this.state.titles);
-        const { letters, isStart, isGameOver } = this.state; //destructuring
+        const { isShowPoints, isStart, isGameOver, isDivShow, isWrongLetters } = this.state; //destructuring
 
         return (
             <>
@@ -240,7 +281,7 @@ class PlayGame extends Component {
                     {/* <hr />
                     {
                         isStart && this.renderEnglishTitle()
-                    }                     */}
+                    }*/}
                     <hr />
                     
                     {
@@ -248,6 +289,15 @@ class PlayGame extends Component {
                     }
                     {
                         isGameOver && this.gameOver()
+                    }
+                    {
+                        isShowPoints && this.state.points + " points. Try again!"
+                    }
+                    {
+                        isWrongLetters && this.ShowSpanWrongLetters()
+                    }
+                    {
+                        isDivShow && this.ShowDivImg()
                     }
                     <div id="div"></div>
                 </div>

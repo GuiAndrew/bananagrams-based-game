@@ -14,7 +14,10 @@ const Instructions = () => {
                                 You can see the Wikipedia <a target="_blank" href="https://en.wikipedia.org/wiki/Bananagrams" rel="noopener noreferrer">here</a>, for the real Bananagrams game board.
                             </p>
                             <p>
-                                In this app you have only 2 min to put the max titles you remember with the 21 letters on the tiles will be random showing to you, after you click "Split".
+                                This game is based on the original game!
+                            </p>
+                            <p>
+                                In this app you have only 1 min and a half to put the maximum titles you remember with the 21 letters on the tiles, that will be random showing to you, after you click "Split".
                             </p>
                             <p>
                                 You have to separate each title with a comma.
@@ -36,7 +39,7 @@ const Instructions = () => {
                                     <li>- 18: E</li>
                                 </ul>
                             <p>
-                                One more important rule, the words have to be title from anime/manga!!
+                                One more important rule, the words to the titles have to be anime/manga titles!!
                             </p>
                         </div>
                     </div>
