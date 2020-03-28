@@ -15,7 +15,9 @@ class PlayGame extends Component {
         this.state = {
             titles: [],
             isStart: false,
-            isGameOver: false
+            isGameOver: false,
+            isButtonStart: false,
+            isButtonDone: true
         }
     }
     
@@ -47,10 +49,6 @@ class PlayGame extends Component {
         });
     }
 
-    handleGameStart = () => {
-        this.setState({ isStart: !this.state.isStart });
-    }
-
     renderEnglishTitle = () => {
         const { titles } = this.state; //destructuring
 
@@ -69,6 +67,34 @@ class PlayGame extends Component {
         );
     }
 
+    timeGame = () => {
+        clearInterval(this.interval); // Prevent duplicates
+
+        // Will set the timeout
+        const oneMinHalf = 1000 * 89;
+        this.timeout = new Date() * 1 + oneMinHalf;
+
+        this.setState({ isStart: !this.state.isStart });
+        this.setState({ isButtonStart: !this.state.isButtonStart });
+        this.setState({ isButtonDone: !this.state.isButtonDone });
+
+        // Create intervel
+        this.interval = setInterval(() => {
+            console.log('time for game: 1 second...');
+
+            if (new Date() > this.timeout) {
+                // Time is out
+                console.log('Time is out!');
+
+                // Clear the time
+                clearInterval(this.interval);
+                this.setState({ isStart: !this.state.isStart });
+                this.setState({ isButtonStart: !this.state.isButtonStart });
+                this.setState({ isButtonDone: !this.state.isButtonDone });
+            }
+        }, 1000);
+    }
+
     getWordsFromInput = () => {        
         let lettersToCheck = this.randomLetters.toString().replace(/,/g, ''); // Convert the array to a string and replace all commas with no space.
         let inputValues = document.querySelector('#animeTitles').value.toUpperCase();
@@ -84,8 +110,6 @@ class PlayGame extends Component {
         let arr = [];
         let pointsToCount = 0;
         let points = 0;
-
-        // console.log(titles);
 
         arr.push(inputValues.split(',')); // Will put the values in the input in to the array arr. 
 
@@ -205,18 +229,18 @@ class PlayGame extends Component {
                 <div className="container mb-10">        
                     <h2>Let's Play!!!</h2>
                     <h5>Press Start to begin!</h5>
-                    <button className="waves-effect waves-light btn" onClick={this.handleGameStart}>Split</button>
+                    {/* <button className="waves-effect waves-light btn" onClick={this.handleGameStart}>Split</button> */}
+                    <button className="waves-effect waves-light btn" onClick={this.timeGame} disabled={this.state.isButtonStart}>Split</button>
 
-                    <button className="waves-effect waves-light btn" onClick={this.getWordsFromInput}>Done</button>
+                    <button className="waves-effect waves-light btn" onClick={this.getWordsFromInput} disabled={this.state.isButtonDone}>Done</button>
                     <hr />
                     <div className="container mb-10">
-                        {/* { isStart && letters } */}
                         { isStart && this.randomLetterToPlay() }
                     </div>
-                    <hr />
+                    {/* <hr />
                     {
                         isStart && this.renderEnglishTitle()
-                    }                    
+                    }                     */}
                     <hr />
                     
                     {
